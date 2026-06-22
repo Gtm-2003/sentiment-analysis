@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sentiment Analysis Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <main class="page">
+      <section class="card main-card">
+        <div class="hero-panel">
+          <span class="eyebrow">Advanced Sentiment Studio</span>
+          <h1>Analyze tone, emotion, and style</h1>
+          <p class="intro">Paste or type any text and receive a richer sentiment profile with polarity, subjectivity, confidence, word insights, and session history.</p>
+        </div>
+
+        <form method="post" class="analysis-form">
+          <label for="text">Text to analyze</label>
+          <textarea id="text" name="text" placeholder="Type your sentence or paragraph here...">{{ text or '' }}</textarea>
+
+          <div class="form-actions">
+            <button type="submit">Analyze sentiment</button>
+          </div>
+
+          {% if error %}
+            <p class="error">{{ error }}</p>
+          {% endif %}
+        </form>
+      </section>
+
+      {% if history %}
+        <aside class="history-card">
+          <div class="history-header">
+            <h2>Recent analyses</h2>
+            <p>Review your last entries in this session.</p>
+          </div>
+          <ul class="history-list">
+            {% for item in history %}
+              <li class="history-item">
+                <div class="history-meta">
+                  <strong class="badge badge-{{ item.label|lower|replace(' ', '-') }}">{{ item.label }}</strong>
+                  <span>{{ item.polarity }} / {{ item.subjectivity }}</span>
+                </div>
+                <p>{{ item.short_text }}</p>
+                <time>{{ item.date }}</time>
+              </li>
+            {% endfor %}
+          </ul>
+        </aside>
+      {% endif %}
+    </main>
+  </body>
+</html>

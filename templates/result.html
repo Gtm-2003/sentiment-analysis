@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Analysis Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <main class="page">
+      <section class="card result-card">
+        <div class="result-header">
+          <div>
+            <span class="eyebrow">Sentiment Profile</span>
+            <h1>Analysis Result</h1>
+          </div>
+          <span class="badge badge-{{ label|lower|replace(' ', '-') }}">{{ label }}</span>
+        </div>
+
+        <p class="summary">{{ polarity_desc }} {{ subjectivity_desc }}</p>
+
+        <div class="metric-grid">
+          <article class="metric-card">
+            <h3>Polarity</h3>
+            <p>{{ polarity }}</p>
+          </article>
+          <article class="metric-card">
+            <h3>Subjectivity</h3>
+            <p>{{ subjectivity }}</p>
+          </article>
+          <article class="metric-card">
+            <h3>Confidence</h3>
+            <p>{{ confidence }}</p>
+          </article>
+        </div>
+
+        <div class="meter-group">
+          <div>
+            <h4>Polarity strength</h4>
+            <div class="meter-track"><div class="meter-fill polarity" style="width: {{ 50 + (polarity * 50) }}%;"></div></div>
+          </div>
+          <div>
+            <h4>Subjectivity</h4>
+            <div class="meter-track"><div class="meter-fill subjectivity" style="width: {{ subjectivity * 100 }}%;"></div></div>
+          </div>
+        </div>
+
+        <div class="insight-grid">
+          <article class="insight-card">
+            <h3>Words analyzed</h3>
+            <p>{{ word_count }} words · {{ sentence_count }} sentences · average word length {{ avg_word_length }}</p>
+          </article>
+          <article class="insight-card">
+            <h3>Trend</h3>
+            <p>{{ trend or 'No previous analysis to compare yet.' }}</p>
+          </article>
+        </div>
+
+        <div class="tag-grid">
+          <div class="tag-block">
+            <h3>Positive terms</h3>
+            {% if positive_terms %}
+              <div class="tag-list">
+                {% for word, score, count in positive_terms %}
+                  <span class="chip">{{ word }} ({{ score }})</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p class="muted">No strong positive terms found.</p>
+            {% endif %}
+          </div>
+
+          <div class="tag-block">
+            <h3>Negative terms</h3>
+            {% if negative_terms %}
+              <div class="tag-list">
+                {% for word, score, count in negative_terms %}
+                  <span class="chip chip-negative">{{ word }} ({{ score }})</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p class="muted">No strong negative terms found.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="preview-card">
+          <h3>Original text</h3>
+          <p>{{ text }}</p>
+        </div>
+
+        <div class="back"><a href="/">Analyze another text</a></div>
+      </section>
+
+      {% if history %}
+        <aside class="history-card">
+          <div class="history-header">
+            <h2>Recent analyses</h2>
+            <p>Session history for comparison.</p>
+          </div>
+          <ul class="history-list">
+            {% for item in history %}
+              <li class="history-item">
+                <div class="history-meta">
+                  <strong class="badge badge-{{ item.label|lower|replace(' ', '-') }}">{{ item.label }}</strong>
+                  <span>{{ item.polarity }} / {{ item.subjectivity }}</span>
+                </div>
+                <p>{{ item.short_text }}</p>
+                <time>{{ item.date }}</time>
+              </li>
+            {% endfor %}
+          </ul>
+        </aside>
+      {% endif %}
+    </main>
+  </body>
+</html>
